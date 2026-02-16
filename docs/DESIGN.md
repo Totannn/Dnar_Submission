@@ -1,7 +1,7 @@
 # ML Inference System - Design Document
 ## Transaction Risk Scoring for Crypto-Fiat Conversions
 
-**Author**: TOTAN [Your Last Name]  
+**Author**: TOTAN OLATUNJI
 **Company**: Dnar  
 **Date**: February 16, 2026  
 **System**: Real-time Fraud Detection & AML Compliance Service
@@ -284,3 +284,4 @@ API Gateway → /score/fraud → Fraud Detection Pod
 - Cost: ~$25K/month → $35K/month
 
 ---
+
