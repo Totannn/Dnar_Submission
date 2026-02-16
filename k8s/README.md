@@ -368,16 +368,3 @@ rate(transaction_risk_scores_total{status="error"}[5m])
 
 ---
 
-## Production Checklist
-
-- [x] **Security**: Non-root, NetworkPolicy, RBAC
-- [x] **Availability**: 3 replicas, PDB, anti-affinity
-- [x] **Monitoring**: Prometheus metrics, health checks
-- [x] **Scaling**: HPA configured and tested
-- [x] **Performance**: Resource requests/limits optimized
-- [x] **Disaster Recovery**: Rollback procedures documented
-- [x] **Compliance**: Audit logging, encryption, network isolation
-
----
-
-**Ready for production deployment in Dnar's crypto-to-fiat platform!**
