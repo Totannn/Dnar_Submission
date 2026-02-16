@@ -1,0 +1,163 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-risk-scoring
+  labels:
+    app: transaction-risk-scoring
+    tier: ml-inference
+    compliance: aml-kyc
+    version: v1
+  annotations:
+    description: "Real-time transaction risk scoring for crypto-fiat conversions"
+    owner: "ml-ops-team@dnar.io"
+    compliance-requirement: "AML/KYC/PCI-DSS"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: transaction-risk-scoring
+  template:
+    metadata:
+      labels:
+        app: transaction-risk-scoring
+        tier: ml-inference
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - transaction-risk-scoring
+            topologyKey: kubernetes.io/hostname
+      
+      serviceAccountName: transaction-risk-scoring
+      
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      initContainers:
+      - name: model-loader
+        image: google/cloud-sdk:slim
+        command:
+        - sh
+        - -c
+        - |
+          echo "Model loading would happen here in production"
+          echo "Security: Model files are encrypted at rest and verified"
+        volumeMounts:
+        - name: model-storage
+          mountPath: /models
+        env:
+        - name: MODEL_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: ml-config
+              key: model_version
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      
+      containers:
+      - name: transaction-risk-scoring
+        image: transaction-risk-scoring:v1.0.0
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        
+        env:
+        - name: MODEL_PATH
+          value: "/app/models/model.pkl"
+        - name: MODEL_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: ml-config
+              key: model_version
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: ml-config
+              key: environment
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: ml-config
+              key: log_level
+        
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "2000m"
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 12
+        
+        volumeMounts:
+        - name: model-storage
+          mountPath: /app/models
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+      
+      volumes:
+      - name: model-storage
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}

@@ -1,0 +1,69 @@
+# ===========================
+# Python cache / compiled files
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ===========================
+# Virtual environments
+# ===========================
+venv/
+.env/
+.venv/
+env/
+
+# ===========================
+# Environment & secrets
+# ===========================
+.env
+.env.*
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+*.sqlite3
+*.db
+
+# ===========================
+# Git
+# ===========================
+.git/
+.gitignore
+.gitattributes
+
+# ===========================
+# Testing / development files
+# ===========================
+tests/
+*.log
+coverage/
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# ===========================
+# IDE / Editor
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===========================
+# OS files
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Documentation
+# ===========================
+*.md
+docs/
+
+# ===========================
+# Docker-related (
+# ===========================
+docker-compose.yml

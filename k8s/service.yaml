@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-risk-scoring
+  labels:
+    app: transaction-risk-scoring
+    tier: ml-inference
+spec:
+  type: ClusterIP
+  selector:
+    app: transaction-risk-scoring
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: transaction-risk-scoring
+  labels:
+    app: transaction-risk-scoring
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ml-config
+  labels:
+    app: transaction-risk-scoring
+data:
+  model_version: "v1.0.0"
+  environment: "production"
+  log_level: "INFO"
+  max_transaction_amount: "1000000"
+  high_risk_threshold: "0.8"
+  audit_log_retention_days: "90"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: transaction-risk-scoring-netpol
+spec:
+  podSelector:
+    matchLabels:
+      app: transaction-risk-scoring
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: api-gateway
+    ports:
+    - protocol: TCP
+      port: 8000
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8000
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
