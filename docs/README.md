@@ -1,13 +1,13 @@
 # Transaction Risk Scoring System - Dnar MLOps Submission
 
-**Candidate**: TOTAN [Your Full Name]  
+**Candidate**: TOTAN OLATUNJI 
 **Position**: Senior ML Ops Engineer  
 **Company**: Dnar  
 **Date**: February 16, 2026
 
 ---
 
-## Executive Summary
+## Summary
 
 This submission demonstrates a **production-ready ML inference system** for real-time transaction risk scoring in Dnar's crypto-to-fiat conversion platform. The solution showcases:
 
@@ -143,7 +143,7 @@ dnar/
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Build Image
 ```bash
@@ -171,7 +171,7 @@ docker rm ml-inference
 
 ---
 
-## ☸️ Kubernetes Deployment
+##  Kubernetes Deployment
 
 ### Deploy to Cluster
 ```bash
@@ -227,7 +227,7 @@ sum(rate(transaction_risk_scores_total{risk_level="HIGH"}[1h]))
 
 ---
 
-## 🔒 Security & Compliance
+## Security & Compliance
 
 ### Regulatory Compliance
 
@@ -256,7 +256,7 @@ sum(rate(transaction_risk_scores_total{risk_level="HIGH"}[1h]))
 
 ---
 
-## 🎓 Key Design Decisions
+## Key Design Decisions
 
 ### 1. Why Random Forest?
 - **Latency**: 10x faster than neural nets (<5ms inference)
@@ -282,7 +282,7 @@ sum(rate(transaction_risk_scores_total{risk_level="HIGH"}[1h]))
 
 ---
 
-## 🎯 Production Readiness
+## Production Readiness
 
 ### Checklist
 
@@ -299,7 +299,7 @@ sum(rate(transaction_risk_scores_total{risk_level="HIGH"}[1h]))
 
 ---
 
-## 💰 Cost & Performance
+##  Cost & Performance
 
 ### Current Configuration
 
@@ -319,4 +319,5 @@ sum(rate(transaction_risk_scores_total{risk_level="HIGH"}[1h]))
 - 20 pods (peak load): ~$1,200/month
 
 ---
+
 
